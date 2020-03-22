@@ -1,10 +1,16 @@
 package dev.adamcross.europa.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import dev.adamcross.europa.service.ArchiveElementResponse;
+import lombok.Getter;
+import lombok.Setter;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 
 @Entity
@@ -12,9 +18,30 @@ import java.util.Set;
 public class ArchiveElement {
 	@Id
 	@GeneratedValue
-	Integer id;
+	@Getter @Setter
+	Long id;
+	@Getter @Setter
 	String textData;
+	@Getter @Setter
 	LocalDateTime postDate;
+	@Getter @Setter
+	Long masterId;
+	@Getter @Setter
+	String previousHash;
+	@Getter @Setter
+	String hash;
+
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "user_id")
+	@OnDelete(action = OnDeleteAction.CASCADE)
+	@JsonIgnore
+	@Getter
+	ApplicationUser user;
+
+	public ArchiveElement(ApplicationUser user) {
+		this.user = user;
+	}
 
 	@ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.PERSIST)
     @JoinTable(
@@ -22,41 +49,16 @@ public class ArchiveElement {
             joinColumns = {@JoinColumn(name = "archive_element_id")},
             inverseJoinColumns = {@JoinColumn(name = "tag_id")}
     )
+	@Getter @Setter
     private Set<SubjectTag> tags = new HashSet<>();
 
-	public ArchiveElement() {
+	public void setHash(int hash) {
+		this.hash = Integer.toString(hash);
 	}
 
-	public Set<SubjectTag> getTags() {
-		return tags;
-	}
-
-	public Integer getId() {
-		return this.id;
-	}
-
-	public String getTextData() {
-		return this.textData;
-	}
-
-	public LocalDateTime getPostDate() {
-		return this.postDate;
-	}
-
-	public void setId(Integer id) {
-		this.id = id;
-	}
-
-	public void setTextData(String textData) {
-		this.textData = textData;
-	}
-
-	public void setPostDate(LocalDateTime postDate) {
-		this.postDate = postDate;
-	}
-
-	public void setTags(Set<SubjectTag> tags) {
-		this.tags = tags;
+	@Override
+	public int hashCode() {
+		return Objects.hash(textData, masterId, postDate, tags, previousHash);
 	}
 
 	public ArchiveElementResponse getArchiveElementResponse() {
@@ -68,5 +70,16 @@ public class ArchiveElement {
 			archiveElementResponse.getTags().add(tag.getText());
 		});
 		return archiveElementResponse;
+	}
+
+	public ArchiveElementData getArchiveElementData() {
+		ArchiveElementData archiveElementData = new ArchiveElementData();
+		archiveElementData.setId(this.id);
+		archiveElementData.setPostDate(this.postDate);
+		archiveElementData.setTextData(this.textData);
+		archiveElementData.setHash(this.getHash());
+		archiveElementData.setPreviousHash(this.getPreviousHash());
+		archiveElementData.setUsername(this.getUser().getUsername());
+		return archiveElementData;
 	}
 }
