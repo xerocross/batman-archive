@@ -13,6 +13,10 @@ import java.util.Set;
 @Entity
 @Table(name = "TAG")
 public class SubjectTag {
+
+	public SubjectTag(){
+	}
+
 	@Id
 	@GeneratedValue
 	@Getter
@@ -21,6 +25,8 @@ public class SubjectTag {
 	@Getter
 	@Setter
 	private String text;
+
+
 
 	@ManyToOne(fetch = FetchType.LAZY, optional = false)
 	@JoinColumn(name = "user_id", nullable = false)

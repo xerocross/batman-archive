@@ -7,6 +7,11 @@ import javax.persistence.Id;
 
 @Entity
 public class ApplicationUser {
+
+    public ApplicationUser(){
+
+    }
+    
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;

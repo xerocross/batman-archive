@@ -11,6 +11,8 @@ import javax.persistence.*;
 @Entity
 @Table(name = "ARCHIVE_MASTER_ELEMENT")
 public class ArchiveMasterElement {
+
+    public ArchiveMasterElement() {}
     @Id
     @GeneratedValue
     @Getter @Setter
