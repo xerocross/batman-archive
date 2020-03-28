@@ -1,0 +1,8 @@
+database schema
+
+create table TAG (
+ID INTEGER(10) AUTO_INCREMENT,
+TEXT VARCHAR(255),
+USER_ID BIGINT(19)
+);
+
