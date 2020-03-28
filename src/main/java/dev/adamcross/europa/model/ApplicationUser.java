@@ -11,7 +11,7 @@ public class ApplicationUser {
     public ApplicationUser(){
 
     }
-    
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
