@@ -21,6 +21,8 @@ is a stand-alone API.  It is still under construction.
 
 ## The API
 
+## background
+
 The specifics of teh API are under constructions, but here is the basic idea.
 
 The unit of information storage is called an Archive Element ("element" 
@@ -32,6 +34,38 @@ Therefore, the API will include a newData endpoint for posting new information.
 
 It will also include an endpoint for querying the database and retrieving a 
 list of elements matching the query.
+
+## API usage
+
+### POST /login
+
+POST json data of the form
+
+{
+	"username" : [username],
+	"password" : [password]
+}
+
+### POST /users/sign-up
+
+POST json data of the form
+
+{
+	"username" : [username],
+	"password" : [password]
+}
+
+### POST /archive/new
+
+POST json data of the form
+
+{
+	"archiveText" : "This is the first #batcomputer #archive element"
+}
+
+### GET /archive/all
+
+returns a list of all archive elements associated to the user
 
 # Front End
 
