@@ -56,22 +56,23 @@ public class ArchiveService {
 		archiveElement.getTags().addAll(tags);
 	}
 
-	public ArchiveElement handleRevision(DataRequestBody dataRequestBody, Long elementHash) {
-		List<ArchiveElement> formerElementMatches = archiveElementRepo.findByHash(elementHash);
-		ArchiveElement formerElement = formerElementMatches.stream().findFirst().orElse(null);
-		if (formerElement == null) {
-			throw new RuntimeException();
-		} else {
-			ArchiveMasterElement archiveMasterElement = archiveMasterElementRepo.findById(formerElement.getMasterId())
-					.stream().findFirst().orElse(null);
-			if (archiveMasterElement == null) {
-				throw new RuntimeException();
-			}
-			if (archiveMasterElement.getLatestHash().equals(elementHash)) {
-				throw new RuntimeException();
-			}
-			return buildAndSaveRevision(dataRequestBody, archiveMasterElement);
-		}
+	public ArchiveElement handleRevision(Long archiveMasterId,DataRequestBody dataRequestBody) {
+//		List<ArchiveElement> formerElementMatches = archiveElementRepo.findByHash(elementHash);
+//		ArchiveElement formerElement = formerElementMatches.stream().findFirst().orElse(null);
+//		if (formerElement == null) {
+//			throw new RuntimeException();
+//		} else {
+//			ArchiveMasterElement archiveMasterElement = archiveMasterElementRepo.findById(formerElement.getMasterId())
+//					.stream().findFirst().orElse(null);
+//			if (archiveMasterElement == null) {
+//				throw new RuntimeException();
+//			}
+//			if (archiveMasterElement.getLatestHash().equals(elementHash)) {
+//				throw new RuntimeException();
+//			}
+//			return buildAndSaveRevision(dataRequestBody, archiveMasterElement);
+//		}
+		return null;
 	}
 
 	private ArchiveElement buildAndSaveRevision(DataRequestBody dataRequestBody, ArchiveMasterElement archiveMasterElement) {
@@ -93,7 +94,7 @@ public class ArchiveService {
 		return archiveMasterElement;
 	}
 
-	public ArchiveElement getArchiveElementById(Integer id) {
+	public ArchiveElement getArchiveElementById(Long id) {
 		Optional<ArchiveElement> elt = archiveElementRepo.findById(id);
 		return elt.orElse(null);
 	}

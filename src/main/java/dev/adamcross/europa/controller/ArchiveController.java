@@ -20,7 +20,7 @@ public class ArchiveController {
 	private final ArchiveService archiveService;
 	private final AuthenticationService authenticationService;
 
-	@PostMapping(path = "/newInfo",  
+	@PostMapping(path = "/archive/new",
 			consumes = "application/json", 
 			produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<ArchiveServiceResponse> addNewInfo(@RequestBody DataRequestBody dataRequestBody) {
@@ -32,7 +32,7 @@ public class ArchiveController {
 		return ResponseEntity.ok(response);
 	}
 
-	@GetMapping(path = "/all",
+	@GetMapping(path = "/archive/all",
 			produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<ArchiveListResponse> getAll() {
 		ApplicationUser user = authenticationService.getUser();
@@ -46,21 +46,21 @@ public class ArchiveController {
 		return ResponseEntity.ok(archiveListResponse);
 	}
 
-	@PostMapping(path = "/revise/{archiveHash}",
+	@PostMapping(path = "/revise/{archiveMasterId}",
 			consumes = "application/json",
 			produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<ArchiveServiceResponse> reviseArchiveElement(
-										@PathVariable Long archiveHash,
+										@PathVariable Long archiveMasterId,
 										@RequestBody DataRequestBody dataRequestBody) {
-		ArchiveElement archiveElement = archiveService.handleRevision(dataRequestBody, archiveHash);
+		ArchiveElement archiveElement = archiveService.handleRevision(archiveMasterId, dataRequestBody);
 		ArchiveServiceResponse response = new ArchiveServiceResponse();
 		response.setId(archiveElement.getId());
 		return ResponseEntity.ok(response);
 	}
 
-	@GetMapping(path = "/{archiveElementId}",  
+	@GetMapping(path = "/archive/{archiveElementId}",
 		produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<ArchiveServiceResponse> getNewInfo(@PathVariable Integer archiveElementId) {
+	public ResponseEntity<ArchiveServiceResponse> getNewInfo(@PathVariable Long archiveElementId) {
 		ArchiveElement archiveEntity = archiveService.getArchiveElementById(archiveElementId);
 		if (archiveEntity == null) {
 			return ResponseEntity.notFound().build();
@@ -71,7 +71,7 @@ public class ArchiveController {
 		}
 	}
 	
-	@GetMapping(path = "/search", produces = MediaType.APPLICATION_JSON_VALUE)
+	@GetMapping(path = "archive/search", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<ArchiveListResponse> searchArchive(@RequestParam String searchString) {
 		ArchiveListResponse response = new ArchiveListResponse();
 		List<ArchiveElement> list = archiveService.searchText(searchString);
@@ -81,7 +81,7 @@ public class ArchiveController {
 		return ResponseEntity.ok(response);
 	}
 
-	@GetMapping(path = "/tag/{tagText}", produces = MediaType.APPLICATION_JSON_VALUE)
+	@GetMapping(path = "archive/tag/{tagText}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<ArchiveListResponse> findByTag(@PathVariable String tagText) {
 		ArchiveListResponse response = new ArchiveListResponse();
 		Set<ArchiveElement> list = archiveService.searchByTag(tagText);
@@ -90,5 +90,4 @@ public class ArchiveController {
 		});
 		return ResponseEntity.ok(response);
 	}
-	
 }

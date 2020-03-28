@@ -25,7 +25,7 @@ public class ArchiveServiceHelper {
 		LocalDateTime now = LocalDateTime.now();
 		ArchiveElement archiveElement = new ArchiveElement(authenticationService.getUser());
 		archiveElement.setPostDate(now);
-		archiveElement.setTextData(dataRequestBody.getDataRequestBody());
+		archiveElement.setTextData(dataRequestBody.getArchiveText());
 		return archiveElement;
 	}
 	
