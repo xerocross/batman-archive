@@ -4,6 +4,8 @@ target/
 !**/src/main/**
 !**/src/test/**
 log.txt
+.gitignore~
+..gitignore.un~
 
 ### STS ###
 .apt_generated
