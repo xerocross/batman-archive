@@ -31,6 +31,8 @@ public class ArchiveElement {
 	@Getter @Setter
 	String hash;
 
+	public ArchiveElement(){
+	}
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "user_id")
@@ -45,7 +47,7 @@ public class ArchiveElement {
 
 	@ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.PERSIST)
     @JoinTable(
-            name = "archive_element_tags",
+            name = "ARCHIVE_ELEMENT_TAG",
             joinColumns = {@JoinColumn(name = "archive_element_id")},
             inverseJoinColumns = {@JoinColumn(name = "tag_id")}
     )
