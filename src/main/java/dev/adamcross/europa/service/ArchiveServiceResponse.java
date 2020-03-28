@@ -4,6 +4,7 @@ import lombok.Data;
 
 @Data
 public class ArchiveServiceResponse {
-	private Integer id;
+	private Long id;
 	private String textData;
+	private String username;
 }

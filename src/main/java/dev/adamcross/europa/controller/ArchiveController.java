@@ -1,35 +1,58 @@
 package dev.adamcross.europa.controller;
+
+import dev.adamcross.europa.model.ApplicationUser;
+import dev.adamcross.europa.model.ArchiveElement;
+import dev.adamcross.europa.model.ArchiveElementData;
+import dev.adamcross.europa.service.*;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
-
-import dev.adamcross.europa.model.ArchiveElement;
-import dev.adamcross.europa.service.ArchiveListResponse;
-import dev.adamcross.europa.service.ArchiveService;
-import dev.adamcross.europa.service.ArchiveServiceResponse;
-import dev.adamcross.europa.service.DataRequestBody;
-import lombok.RequiredArgsConstructor;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @RestController
 @RequiredArgsConstructor
 public class ArchiveController {
 	
 	private final ArchiveService archiveService;
+	private final AuthenticationService authenticationService;
 
 	@PostMapping(path = "/newInfo",  
 			consumes = "application/json", 
 			produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<ArchiveServiceResponse> addNewInfo(@RequestBody DataRequestBody dataRequestBody) {
+		ApplicationUser user = authenticationService.getUser();
 		ArchiveElement archiveElement = archiveService.handleNewData(dataRequestBody);
+		ArchiveServiceResponse response = new ArchiveServiceResponse();
+		response.setUsername(user.getUsername());
+		response.setId(archiveElement.getId());
+		return ResponseEntity.ok(response);
+	}
+
+	@GetMapping(path = "/all",
+			produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<ArchiveListResponse> getAll() {
+		ApplicationUser user = authenticationService.getUser();
+		List<ArchiveElementData> archiveElementData = archiveService
+				.getAll()
+				.stream()
+				.map(ArchiveElement::getArchiveElementData)
+				.collect(Collectors.toList());
+		ArchiveListResponse archiveListResponse = new ArchiveListResponse();
+		archiveListResponse.setArchiveElementData(archiveElementData);
+		return ResponseEntity.ok(archiveListResponse);
+	}
+
+	@PostMapping(path = "/revise/{archiveHash}",
+			consumes = "application/json",
+			produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<ArchiveServiceResponse> reviseArchiveElement(
+										@PathVariable Long archiveHash,
+										@RequestBody DataRequestBody dataRequestBody) {
+		ArchiveElement archiveElement = archiveService.handleRevision(dataRequestBody, archiveHash);
 		ArchiveServiceResponse response = new ArchiveServiceResponse();
 		response.setId(archiveElement.getId());
 		return ResponseEntity.ok(response);
@@ -53,10 +76,19 @@ public class ArchiveController {
 		ArchiveListResponse response = new ArchiveListResponse();
 		List<ArchiveElement> list = archiveService.searchText(searchString);
 		list.forEach(elt-> {
-			response.getArchiveElements().add(elt.getArchiveElementResponse());
+			response.getArchiveElementData().add(elt.getArchiveElementData());
 		});
 		return ResponseEntity.ok(response);
 	}
-	
+
+	@GetMapping(path = "/tag/{tagText}", produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<ArchiveListResponse> findByTag(@PathVariable String tagText) {
+		ArchiveListResponse response = new ArchiveListResponse();
+		Set<ArchiveElement> list = archiveService.searchByTag(tagText);
+		list.forEach(elt-> {
+			response.getArchiveElementData().add(elt.getArchiveElementData());
+		});
+		return ResponseEntity.ok(response);
+	}
 	
 }
