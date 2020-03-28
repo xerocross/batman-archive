@@ -1,1 +1,1 @@
-web: java -Dserver.port=$PORT $JAVA_OPTS -jar target/*.jar -Dspring.profiles.active=test
+web: java -Dserver.port=$PORT $JAVA_OPTS -jar target/*.war -Dspring.profiles.active=test
